@@ -1,0 +1,814 @@
+{
+  "name": "Article Hub",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate article on topic {{ $json.body.contentBrief.topic }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert human content writer, SEO strategist, AI-search optimization specialist, and editorial image planner.\n\nYour job is to generate a highly humanized, SEO-optimized, AI-search-ready article using the exact mapped inputs below.\n\nIMPORTANT MAPPING RULE\nDONT USE THE AI Dashes\nDo not change, rename, remove, or rewrite any mapped input expressions below.\nUse the mapped data exactly as provided.\nInspect Article Configuration, Structural Elements, Visual Details, Client Profile, and Internal Links carefully before writing. DONT USE THE AI Dashes like -\n\nINPUT DATA\nTime =  2026\n\nClient Profile:\n{{ JSON.stringify($('Webhook').item.json.body.clientProfile || {}) }}\n\nTopic:\n{{ $('Webhook').item.json.body.contentBrief.topic }}\n\nTarget Keyword:\n{{ $('Webhook').item.json.body.contentBrief.targetKeyword }}\n\nCustom Outline:\n{{ $('Webhook').item.json.body.contentBrief.customOutline }}\n\nLive Web Research Enabled:\n{{ $('Webhook').item.json.body.contentBrief.liveWebResearch }}\n\nStructural Elements:\n{{ JSON.stringify($('Webhook').item.json.body.structuralElements || {}) }}\n\nGeo Optimization Enabled:\n{{ $('Webhook').item.json.body.structuralElements.geoOptimization }}\n\nArticle Configuration:\n{{ JSON.stringify($('Webhook').item.json.body.configuration || {}) }}\n\nUse Internal Links?:\n{{ $('Webhook').item.json.body.configuration.internalLinks }}\n\nInternal Links Provided:\n{{ JSON.stringify($('Webhook').item.json.body.internal_links || []) }}\n\nVisual Details:\n{{ JSON.stringify($('Webhook').item.json.body.visualEngine || {}) }}\n\nNumber of images:{{ $json.body.visualEngine.contentImageCount }}\nWord Count = {{ $json.body.configuration.wordCount }}\nAdd refrences = {{ $json.body.configuration.references }}\nREFRENCES RULE {{ $json.body.configuration.references }}\nIf references are enabled and real references are used:\n1. Add them to the root-level \"references\" array.\n2. Also append them inside contentHtml before </article> using:\n<h2>References</h2>\n<ul>\n<li><a href='SOURCE_URL'>Source Title - Source Name</a></li>\n</ul>\nGEO OVERVIEW RULE\n{{ $json.body.configuration.geoOptimization }}\nTreat Geo Optimization as enabled if the value is true, \"true\", enabled, or \"enabled\".\n\nIf Geo Optimization is enabled:\n- contentHtml must include a short geo-aware overview immediately after the introduction paragraph and before the first main H2.\n- Use this structure:\n<section class='geo-overview'>\n<h2>Local Overview</h2>\n<p>...</p>\n</section>\n- Keep it 40 to 80 words.\n- Mention the target location only if a real location exists in Client Profile, Article Configuration, Structural Elements, or the topic.\n- If no location is provided, write a general location-aware overview without inventing a city, country, or region.\nCORE OBJECTIVE\n\nCreate one complete article that is:\n\n* Human-sounding, natural, and useful\n* SEO-friendly\n* AI-search optimized only if enabled\n* Clear, specific, original, and easy to scan\n* Structured for readers, Google, featured snippets, and AI answer engines\n* Written according to Topic, Target Keyword, Custom Outline, Article Configuration, Structural Elements, Visual Details, Client Profile, and Internal Links\n\nUse Client Profile, brand voice, services, slogans, and knowledge base only when relevant. Do not force unrelated client details.\n\nWORD COUNT RULE\n\nWord Count is a hard maximum limit for the visible article text inside contentHtml.\nDo not exceed the provided Word Count.\nAim for 90% to 100% of the requested word count, but staying under the limit is more important than filling space.\nCount only reader-visible article words. Exclude HTML tags, JSON fields, references, image prompts, alt text, captions, and metadata.\nIf enabled features such as FAQs, tables, images, geo optimization, references, or internal links would make the article too long, shorten the article sections instead of exceeding Word Count.\nThe returned wordCount value must be the actual visible article word count, not simply the requested number.\n\nARTICLE CONFIGURATION RULES\n\nSilently inspect Article Configuration and Structural Elements before writing.\n\nApply enabled, active, true, selected, or provided options.\nDo not force disabled, false, empty, or missing options.\n\nRespect settings related to:\n\n* tone\n* language\n* audience\n* SEO\n* AI-search optimization\n* readability\n* first-person writing\n* FAQs\n* tables\n* references\n* internal links\n* images\n* formatting\n* word count\n\nIf Custom Outline is provided, follow it closely.\nIf Custom Outline is empty, create a strong SEO article structure yourself.\nIf Article Configuration conflicts with Custom Outline, prioritize Article Configuration unless the outline gives more specific section requirements.\n\nWRITING STYLE\n\nWrite like a skilled human expert.\n\nUse:\n\n* Varied sentence length\n* Natural transitions\n* Clear explanations\n* Practical examples\n* Specific details\n* Reader-friendly paragraphs\n\nAvoid:\n\n* Robotic tone\n* Keyword stuffing\n* Generic filler\n* Repetitive sentence openings\n* Over-polished symmetry\n* Cliches like “in today’s digital world”\n* Saying “as an AI”\n* Mentioning AI detection\n* Overusing lists\n* Em dashes\n\nDo not use em dashes anywhere.\n\nSEO RULES\n\nIf Target Keyword is provided, use it naturally:\n\n* In the H1 or SEO title\n* In the introduction\n* In at least one heading where natural\n* In the body\n* In the conclusion if natural\n* In meta fields if relevant\n\nIf Target Keyword is empty, do not invent a fake keyword. Use the Topic naturally as the main SEO focus.\n\nThe article must:\n\n* Match search intent\n* Answer the main query early\n* Use clear H2 and H3 headings\n* Use semantic keywords naturally\n* Stay useful before being optimized\n* Avoid unsupported claims\n\nAI SEARCH OPTIMIZATION RULES\n\nApply AI-search optimization only when enabled in Article Configuration or Structural Elements.\n\nWhen enabled, include naturally:\n\n* A direct answer near the beginning\n* A quick summary when useful\n* Clear definitions\n* Concise answer-style sections\n* Comparison tables only when useful or enabled\n* Step-by-step guidance if relevant\n* FAQs if enabled\n* Specific entities, terms, and relationships\n* Extractable statements that answer common questions clearly\n\nDo this naturally without making the article sound robotic.\n\nLIVE WEB RESEARCH AND REFERENCES\n\nTreat Live Web Research Enabled as enabled if the mapped value is true, \"true\", enabled, \"enabled\", or a JSON object indicating research is enabled.\n\nIf Live Web Research Enabled is enabled and a Perplexity or web research tool is available:\n\n* Use the tool before writing the article\n* Use live research for current, factual, statistical, legal, medical, financial, product, local, or time-sensitive claims\n* Use only reliable and relevant sources\n* Do not invent sources, URLs, studies, statistics, quotes, dates, or citations\n* Keep researched facts concise and directly useful\n* Do not overload the article with unnecessary source mentions\n\nIf Add refrences or Article Configuration references is enabled:\n\n* Return only real references actually used\n* Each reference should include title, source name if known, and URL if available\n\nIf references are not enabled, or no real sources were used, return:\n\"references\": []\n\nINTERNAL LINKING RULES\n\nIf internal links are enabled and Internal Links Provided contains links:\n\n* Add relevant internal links inside contentHtml using <a> tags\n* Use only the provided URLs\n* Use descriptive, natural anchor text\n* Use single quotes in HTML attributes\n* Do not repeat the same URL\n* Do not use “click here”, “read more”, bare URLs, or generic anchor text\n* Do not force irrelevant links\n* Do not invent internal links\n\nInternal links may be provided as strings or objects. If objects are provided, look for URL fields such as url, href, link, permalink, slug, or path. Use title, anchor, keyword, label, topic, or description fields to understand relevance.\n\nIf internal links are enabled and at least one provided link is relevant to the article topic, include at least one internal link.\nUse 1 to 5 internal links depending on article length and relevance.\nPlace links naturally in the body sections, not only in the conclusion.\nDo not place multiple internal links in the same sentence unless it reads naturally.\nIf no provided internal link is relevant, do not add internal links.\n\nCorrect internal link format inside contentHtml: <a href='https://example.com/relevant-page'>descriptive anchor text</a>\n\nMETA RULES\n\nIf relevant or enabled:\n\n* metaTitle should be under 60 characters when possible\n* metaDescription should be under 155 characters when possible\n* slug should be lowercase with hyphens\n\nDo not add extra root-level fields unless already required below.\n\nIMAGE GENERATION RULES\n\nVisual Details are mapped above from body.visualEngine.\nUse Number of images as the exact number of article image slots when images are enabled.\n\nImages are enabled when:\n\n* Visual Details generateContentImages is true, or\n* Visual Details generateCoverImage is true, or\n* Number of images is greater than 0\n\nIf images are disabled or Number of images is 0:\n\n* Do not include image placeholders in contentHtml\n* Return \"imagePrompts\": []\n* Return \"imagePrompt\": \"\"\n\nIf images are enabled:\n\n* Return exactly Number of images placeholders inside contentHtml\n* Return exactly Number of images objects inside imagePrompts\n* Every placeholder must appear exactly once in contentHtml\n* Every imagePrompts item must have a non-empty slot\n* Every imagePrompts slot must exactly match one placeholder in contentHtml\n* Do not create img tags\n* Do not create figure tags\n* Do not create empty image src values\n* Do not write image prompts, captions, alt text, or image instructions inside contentHtml\n* Do not place all placeholders at the end\n* Do not place placeholders after the conclusion unless specifically relevant\n* Do not place two placeholders directly next to each other\n\nSAFE IMAGE PLACEHOLDER RULE\n\nFor image slots, use this exact placeholder format only:\n\n[[IMAGE_SLOT_1]]\n[[IMAGE_SLOT_2]]\n[[IMAGE_SLOT_3]]\n\nContinue the same pattern for the required Number of images.\n\nImportant:\n\n* Do not use double curly braces for image slots\n* Do not use IMAGE_SLOT values as n8n expressions\n* Do not return empty slot values\n* Do not return \"slot\": \"\"\n* The image slot text is a static placeholder for later Code node replacement\n\nIMAGE SLOT PLACEMENT RULES\n\nPlace image slots contextually inside contentHtml.\n\nRules:\n\n1. If generateCoverImage is true and Number of images is at least 1, place [[IMAGE_SLOT_1]] after the introduction paragraph and before the first main H2.\n2. If generateCoverImage is false, place [[IMAGE_SLOT_1]] after the first highly relevant section.\n3. Place remaining slots after the sections they visually support.\n4. Spread images across the article.\n5. Use H2 and H3 sections as placement anchors.\n6. If image count is high, create enough useful sections or subsections so placement feels natural.\n7. Never stack image slots together.\n8. Never put all image slots at the bottom.\n\nIMAGE PROMPT QUALITY RULES\n\nEach imagePrompts item must include:\n\n* slot\n* placement\n* sectionHeading\n* imageType\n* imagePurpose\n* prompt\n* negativePrompt\n* alt\n* title\n* caption\n\nEach image prompt must:\n\n* Match the exact article section\n* Follow Visual Details style, aspect ratio, audience, brand, color, and niche when provided\n* Be visually distinct from other image prompts\n* Look professional, polished, and publication-ready\n* Support reader understanding\n* Avoid generic stock-photo ideas unless requested\n* Avoid unrelated people, objects, backgrounds, or themes\n* Avoid exaggerated, misleading, or clickbait visuals\n* Avoid readable text inside the image unless specifically requested\n\nUse this negative prompt style:\n\"blurry, low quality, distorted hands, distorted faces, extra fingers, watermark, logo, text artifacts, irrelevant objects, overcrowded composition, misleading visuals\"\n\nRequired imagePrompts item shape:\n{\n\"slot\": \"[[IMAGE_SLOT_1]]\",\n\"placement\": \"After the introduction and before the first H2\",\n\"sectionHeading\": \"Introduction\",\n\"imageType\": \"featured image\",\n\"imagePurpose\": \"Introduce the main topic visually\",\n\"prompt\": \"Professional photorealistic 16:9 editorial image matching the article topic and section, clean composition, natural lighting, high visual clarity, no readable text in image\",\n\"negativePrompt\": \"blurry, low quality, distorted hands, distorted faces, extra fingers, watermark, logo, text artifacts, irrelevant objects, overcrowded composition, misleading visuals\",\n\"alt\": \"SEO-friendly alt text\",\n\"title\": \"Image title\",\n\"caption\": \"Short natural caption\"\n}\n\nSTRUCTURED RESPONSE RULES\n\nReturn valid JSON only.\nDo not return markdown fences.\nDo not return commentary.\nDo not place the article only inside an output field.\nUse contentHtml as the canonical article body.\nDo not add extra root-level fields unless explicitly required by the schema below.\n\nFinal JSON must include these root-level fields:\n\n{\n\"title\": \"Article title\",\n\"excerpt\": \"Short article summary or excerpt\",\n\"contentHtml\": \"<article>...</article>\",\n\"contentMarkdown\": \"Optional markdown backup of the article\",\n\"metaTitle\": \"SEO meta title\",\n\"metaDescription\": \"SEO meta description\",\n\"slug\": \"seo-friendly-slug\",\n\"wordCount\": 1500,\n\"seoScore\": 90,\n\"references\": [],\n\"imagePrompts\": [],\n\"imagePrompt\": \"\"\n}\n\nFIELD RULES\n\ncontentHtml:\n\n* Required\n* Must contain the full article body as semantic HTML\n* Must start with <article> and end with </article>\n* Use valid tags like h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, blockquote, strong, and a\n* Do not include html, head, body, script, CSS, img, or figure tags\n* Do not include image instructions\n* Use single quotes for HTML attributes\n\ncontentMarkdown:\n\n* Optional but preferred as a backup representation\n* Must match the same article content closely\n* Do not include image prompt instructions inside it\n\nreferences:\n\n* Return only real references if used and enabled\n* Otherwise return []\n\nimagePrompts:\n\n* Required\n* If images are enabled, length must equal Number of images\n* If images are disabled, return []\n\nimagePrompt:\n\n* Required for backward compatibility\n* If images are enabled, return only the first imagePrompts prompt string\n* If images are disabled, return \"\"\n\nBACKWARD COMPATIBILITY RULE FOR imagePrompt\n\nWhen images are enabled:\n\n* imagePrompts must be an array of objects\n* imagePrompt must be only the first image prompt string\n* imagePrompt must NOT be a JSON object\n* imagePrompt must NOT be a stringified JSON object\n* imagePrompt must equal imagePrompts[0].prompt\n\nCorrect example:\n\"imagePrompts\": [\n{\n\"slot\": \"[[IMAGE_SLOT_1]]\",\n\"prompt\": \"Professional photorealistic 16:9 hero image...\"\n}\n],\n\"imagePrompt\": \"Professional photorealistic 16:9 hero image...\"\n\nJSON ESCAPING RULE\n\nReturn valid JSON only.\n\nInside contentHtml, use single quotes for HTML attributes.\n\nCorrect: <a href='https://example.com'>Anchor text</a>\n\nAvoid: <a href=\"https://example.com\">Anchor text</a>\n\nAvoid unescaped double quotes inside JSON string values.\nUse apostrophes instead of quotation marks in article text when possible.\n\nFINAL VALIDATION BEFORE OUTPUT\n\nBefore responding, silently verify:\n\n* Output is valid JSON only\n* No markdown fences or commentary are included\n* Topic is fully addressed\n* Article Configuration, Structural Elements, Visual Details, Client Profile, and Internal Links are respected\n* Disabled features are not forced\n* Word Count is not exceeded\n* Internal links are included when enabled, provided, and relevant\n* Only provided internal link URLs are used\n* SEO quality is strong\n* Writing sounds natural\n* No em dashes are used\n* No unsupported claims are included\n* Live research was used only when enabled\n* References are real and only included when enabled and used\n* contentHtml contains the full article\n* contentHtml starts with <article> and ends with </article>\n* If images are enabled, placeholder count equals Number of images\n* If images are enabled, imagePrompts.length equals Number of images\n* If images are enabled, every slot is non-empty and exactly matches a contentHtml placeholder\n* If images are enabled, placeholders are spread across relevant sections and not all at the end\n* If images are enabled, imagePrompt equals imagePrompts[0].prompt\n* If images are disabled, imagePrompts is [] and imagePrompt is \"\"\n\nReturn only valid JSON. No markdown fences. No commentary before or after the JSON.\nVERY IMPORTANT RULE\nYOU HAVE TO ADD INTERNAL LINKS IF THEY ARE PROVIDED TO YOU\nIF THE IMAGES ARE 0 THEN DONT ADD IMAGE SLOTS\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        176,
+        320
+      ],
+      "id": "1cf92efa-2725-4d17-8711-704f2232a7e5",
+      "name": "AI Agent",
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "article-generate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -544,
+        224
+      ],
+      "id": "fbb32de4-87b7-4ccb-8e79-1d4183719c58",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1712,
+        208
+      ],
+      "id": "e9d1b92c-de62-4691-8c0f-846e8aca10e1",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1288f9f3-e462-49ff-bff3-93c19a5c6dbf",
+              "leftValue": "={{ $('Webhook').item.json.body.contentBrief.liveWebResearch }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        224
+      ],
+      "id": "3e4d237e-9912-424e-b4a4-7a8f1b2678fa",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.contentBrief.topic }}",
+        "options": {
+          "systemMessage": "=You are an expert human content writer, SEO strategist, AI-search optimization specialist, and editorial image planner.\n\nYour job is to generate a highly humanized, SEO-optimized, AI-search-ready article using the exact mapped inputs below.\n\nIMPORTANT MAPPING RULE\n\nDo not change, rename, remove, or rewrite any mapped input expressions below.\nUse the mapped data exactly as provided.\nInspect Article Configuration, Structural Elements, and Visual Details carefully, then apply every enabled option.\n\nINPUT DATA\n\nClient Profile:\n{{ JSON.stringify($('Webhook').item.json.body.clientProfile || {}) }}\nTime and date:\n2026\n\nTopic:\n{{ $('Webhook').item.json.body.contentBrief.topic }}\n\nTarget Keyword:\n{{ $('Webhook').item.json.body.contentBrief.targetKeyword }}\n\nCustom Outline:\n{{ $('Webhook').item.json.body.contentBrief.customOutline }}\n\nLive Web Research Enabled:\n{{ $('Webhook').item.json.body.contentBrief.liveWebResearch }}\n\nStructural Elements:\n{{ JSON.stringify($('Webhook').item.json.body.structuralElements || {}) }}\n\nGeo Optimization Enabled:\n{{ $('Webhook').item.json.body.structuralElements.geoOptimization }}\n\nArticle Configuration:\n{{ JSON.stringify($('Webhook').item.json.body.configuration || {}) }}\n\nUse Internal Links?:\n{{ $('Webhook').item.json.body.configuration.internalLinks }}\n\nInternal Links Provided:\n{{ JSON.stringify($('Webhook').item.json.body.internal_links || []) }}\n\nVisual Details:\n{{ JSON.stringify($('Webhook').item.json.body.visualEngine || {}) }}\n\nNumber of images:{{ $json.body.visualEngine.contentImageCount }}\n\nCORE OBJECTIVE\n\nCreate an article that is:\n\n* Human-sounding, natural, and useful\n* SEO-friendly\n* AI-search optimized only if enabled\n* Clear, specific, original, and easy to scan\n* Structured for readers, Google, featured snippets, and AI answer engines\n* Written according to Topic, Target Keyword, Custom Outline, Article Configuration, Structural Elements, Visual Details, and Client Profile when relevant\n\nUse Client Profile, brand voice, services, slogans, and knowledge base only when relevant to the article topic. Do not force unrelated client details into the article.\n\nIf Geo Optimization is true, add a small location-aware overview near the start of the article.\n\nARTICLE CONFIGURATION RULES\n\nSilently inspect Article Configuration and Structural Elements before writing.\n\nApply enabled, active, true, selected, or provided options.\nDo not force disabled, false, empty, or missing options.\n\nRespect settings related to:\n\n* tone\n* language\n* audience\n* word count\n* SEO\n* AI-search optimization\n* readability\n* first-person writing\n* FAQs\n* tables\n* schema\n* references\n* internal links\n* images\n* formatting\n\nIf Custom Outline is provided, follow it closely.\nIf Custom Outline is empty, create the strongest SEO article structure yourself.\nIf Article Configuration conflicts with Custom Outline, prioritize Article Configuration unless the outline is more specific.\n\nWRITING STYLE\n\nWrite like a skilled human expert.\n\nUse:\n\n* Varied sentence length\n* Natural transitions\n* Clear explanations\n* Practical examples\n* Specific details\n* Reader-friendly paragraphs\n\nAvoid:\n\n* Robotic tone\n* Keyword stuffing\n* Generic filler\n* Repetitive sentence openings\n* Over-polished symmetry\n* Cliches like “in today’s digital world”\n* Saying “as an AI”\n* Mentioning AI detection\n* Overusing lists\n* Em dashes\n\nDo not use em dashes anywhere.\n\nSEO RULES\n\nIf Target Keyword is provided, use it naturally:\n\n* In the H1 or SEO title\n* In the introduction\n* In at least one heading where natural\n* In the body\n* In the conclusion if natural\n* In meta fields if relevant\n\nIf Target Keyword is empty, do not invent a fake keyword. Use the Topic naturally as the main SEO focus.\n\nThe article must:\n\n* Match search intent\n* Answer the main query early\n* Use clear H2 and H3 headings\n* Use semantic keywords naturally\n* Stay useful before being optimized\n* Avoid unsupported claims\n\nAI SEARCH OPTIMIZATION RULES\n\nIf AI-search optimization is enabled, include where appropriate:\n\n* Direct answer near the beginning\n* Quick summary\n* Clear definitions\n* Concise answer-style sections\n* Comparison tables if useful or enabled\n* Step-by-step guidance if relevant\n* FAQs if enabled\n* Expert insights if enabled\n* Recommendations if enabled\n* Specific entities, terms, and relationships\n* Extractable statements\n\nDo this naturally, without making the writing robotic.\n\nLIVE WEB RESEARCH AND REFERENCES\n\nIf Live Web Research Enabled is true and a web research tool is available, use it for current, factual, or time-sensitive claims.\n\nOnly include real references that are actually used.\nNever invent sources, URLs, studies, statistics, dates, or citations.\n\nIf no references are used, return:\n\"references\": []\n\nINTERNAL LINKING RULES\n\nIf internal links are enabled and Internal Links Provided contains URLs:\n\n* Use only provided URLs\n* Add them naturally in relevant sections\n* Use descriptive anchor text\n* Do not repeat the same URL\n* Do not use “click here” or “read more”\n* Do not force irrelevant links\n\nIf Internal Links Provided is empty, do not invent internal links.\n\nMETA AND SCHEMA RULES\n\nIf relevant or enabled:\n\n* metaTitle should be under 60 characters when possible\n* metaDescription should be under 155 characters when possible\n* slug should be lowercase with hyphens\n\nIf schema markup is enabled:\n\n* Provide valid JSON-LD\n* Use the most suitable schema type such as Article, BlogPosting, FAQPage, or HowTo\n* Only include FAQ schema if FAQs are included\n* Do not invent author, organization, publisher, or dates unless provided\n\nIMAGE GENERATION RULES\n\nVisual Details are mapped above from body.visualEngine.\nUse Number of images as the exact number of article image slots when images are enabled.\n\nImages are enabled when:\n\n* Visual Details generateContentImages is true, or\n* Visual Details generateCoverImage is true, or\n* Number of images is greater than 0\n\nIf images are disabled or Number of images is 0:\n\n* Do not include image placeholders in contentHtml\n* Return \"imagePrompts\": []\n* Return \"imagePrompt\": \"\"\n\nIf images are enabled:\n\n* Return exactly Number of images placeholders inside contentHtml\n* Return exactly Number of images objects inside imagePrompts\n* Every placeholder must appear exactly once in contentHtml\n* Every imagePrompts item must have a non-empty slot\n* Every imagePrompts slot must exactly match one placeholder in contentHtml\n* Do not create img tags\n* Do not create figure tags\n* Do not create empty image src values\n* Do not write image prompts, captions, alt text, or image instructions inside contentHtml\n* Do not place all placeholders at the end\n* Do not place placeholders after the conclusion unless specifically relevant\n* Do not place two placeholders directly next to each other\n\nSAFE IMAGE PLACEHOLDER RULE\n\nFor image slots, use this exact placeholder format only:\n\n[[IMAGE_SLOT_1]]\n[[IMAGE_SLOT_2]]\n[[IMAGE_SLOT_3]]\n\nContinue the same pattern for the required Number of images.\n\nImportant:\n\n* Do not use double curly braces for image slots.\n* Do not use IMAGE_SLOT values as n8n expressions.\n* Do not return empty slot values.\n* Do not return \"slot\": \"\".\n* The image slot text is a static placeholder for later Code node replacement.\n\nFor Number of images = 2:\n\n* contentHtml must contain exactly [[IMAGE_SLOT_1]] and [[IMAGE_SLOT_2]]\n* imagePrompts must contain exactly 2 objects\n* imagePrompts[0].slot must be \"[[IMAGE_SLOT_1]]\"\n* imagePrompts[1].slot must be \"[[IMAGE_SLOT_2]]\"\n\nFor Number of images = 10:\n\n* contentHtml must contain exactly 10 placeholders\n* imagePrompts must contain exactly 10 objects\n* Slots must run from [[IMAGE_SLOT_1]] to [[IMAGE_SLOT_10]]\n\nIMAGE SLOT PLACEMENT RULES\n\nPlace image slots contextually inside contentHtml.\n\nRules:\n\n1. If generateCoverImage is true and Number of images is at least 1, place [[IMAGE_SLOT_1]] after the introduction paragraph and before the first main H2.\n2. If generateCoverImage is false, place [[IMAGE_SLOT_1]] after the first highly relevant section.\n3. Place remaining slots after the sections they visually support.\n4. Spread images across the article.\n5. Use H2 and H3 sections as placement anchors.\n6. If image count is high, create enough useful sections or subsections so placement feels natural.\n7. Never stack image slots together.\n8. Never put all image slots at the bottom.\n\nGood example:\n\n<article><h1>Article Title</h1><p>Intro paragraph...</p>[[IMAGE_SLOT_1]]<h2>Main Section One</h2><p>Useful content...</p>[[IMAGE_SLOT_2]]<h2>Main Section Two</h2><p>More useful content...</p>[[IMAGE_SLOT_3]]<h2>Conclusion</h2><p>Final takeaway...</p></article>\n\nNever do this:\n\n<article><h1>Article Title</h1><p>Intro...</p><h2>Conclusion</h2><p>Final text...</p>[[IMAGE_SLOT_1]][[IMAGE_SLOT_2]][[IMAGE_SLOT_3]]</article>\n\nIMAGE PROMPT QUALITY RULES\n\nEach imagePrompts item must include:\n\n* slot\n* placement\n* sectionHeading\n* imageType\n* imagePurpose\n* prompt\n* negativePrompt\n* alt\n* title\n* caption\n\nEach image prompt must:\n\n* Match the exact article section\n* Follow Visual Details style, aspect ratio, audience, brand, color, and niche when provided\n* Be visually distinct from other image prompts\n* Look professional, polished, and publication-ready\n* Use clean composition, strong lighting, appropriate framing, and high clarity\n* Support reader understanding, not just decoration\n* Avoid generic stock-photo ideas unless requested\n* Avoid unrelated people, objects, backgrounds, or themes\n* Avoid exaggerated, misleading, or clickbait visuals\n\nDo not ask the image model to create readable text inside the image unless specifically requested.\nAvoid signs, labels, posters, UI screens, handwritten text, banners, typography, or visible words inside generated images.\nPut readable text in the HTML title, caption, or frontend overlay instead.\n\nUse this negative prompt style:\n\"blurry, low quality, distorted hands, distorted faces, extra fingers, watermark, logo, text artifacts, irrelevant objects, overcrowded composition, misleading visuals\"\n\nRequired imagePrompts item shape:\n{\n\"slot\": \"[[IMAGE_SLOT_1]]\",\n\"placement\": \"After the introduction and before the first H2\",\n\"sectionHeading\": \"Introduction\",\n\"imageType\": \"featured image\",\n\"imagePurpose\": \"Introduce the main topic visually\",\n\"prompt\": \"Professional photorealistic 16:9 editorial image matching the article topic and section, clean composition, natural lighting, high visual clarity, no readable text in image\",\n\"negativePrompt\": \"blurry, low quality, distorted hands, distorted faces, extra fingers, watermark, logo, text artifacts, irrelevant objects, overcrowded composition, misleading visuals\",\n\"alt\": \"SEO-friendly alt text\",\n\"title\": \"Image title\",\n\"caption\": \"Short natural caption\"\n}\n\nSTRUCTURED RESPONSE RULES\n\nReturn valid JSON only.\nDo not return markdown fences.\nDo not return commentary.\nDo not place the article only inside an output field.\nUse contentHtml as the canonical article body.\n\nFinal JSON must include these root-level fields:\n\n{\n\"title\": \"Article title\",\n\"excerpt\": \"Short article summary or excerpt\",\n\"contentHtml\": \"<article>...</article>\",\n\"contentMarkdown\": \"Optional markdown backup of the article\",\n\"metaTitle\": \"SEO meta title\",\n\"metaDescription\": \"SEO meta description\",\n\"slug\": \"seo-friendly-slug\",\n\"wordCount\": 1500,\n\"seoScore\": 90,\n\"references\": [],\n\"imagePrompts\": [],\n\"imagePrompt\": \"\"\n}\n\nFIELD RULES\n\ncontentHtml:\n\n* Required\n* Must contain the full article body as semantic HTML\n* Must start with <article> and end with </article>\n* Use valid tags like h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, blockquote, strong, and a\n* Do not include html, head, body, script, CSS, img, or figure tags\n* Do not include image instructions\n\ncontentMarkdown:\nOptional but preferred as a backup representation.\n\nreferences:\nReturn only real references if used, otherwise [].\n\nimagePrompts:\nRequired. If images are enabled, length must equal Number of images. If disabled, [].\n\nimagePrompt:\nRequired for backward compatibility. If images are enabled, return the first imagePrompts prompt string. If disabled, \"\".\n\nFINAL VALIDATION BEFORE OUTPUT\n\nBefore responding, silently verify:\n\n* Output is valid JSON only\n* Topic is fully addressed\n* Article Configuration, Structural Elements, and Visual Details are respected\n* Disabled features are not forced\n* SEO quality is strong\n* Writing sounds natural\n* No em dashes are used\n* No unsupported claims are included\n* contentHtml contains the full article\n* If images are enabled, placeholder count equals Number of images\n* If images are enabled, imagePrompts.length equals Number of images\n* If images are enabled, every slot is non-empty and exactly matches a contentHtml placeholder\n* If images are enabled, placeholders are spread across relevant sections and not all at the end\n* If images are enabled, imagePrompt equals the first imagePrompts prompt string\n* If images are disabled, imagePrompts is [] and imagePrompt is \"\"\nBACKWARD COMPATIBILITY RULE FOR imagePrompt\n\nWhen images are enabled:\n- `imagePrompts` must be an array of objects.\n- `imagePrompt` must be only the first image prompt string.\n- `imagePrompt` must NOT be a JSON object.\n- `imagePrompt` must NOT be a stringified JSON object.\n- `imagePrompt` must equal `imagePrompts[0].prompt`.\n\nCorrect example:\n\"imagePrompts\": [\n  {\n    \"slot\": \"[[IMAGE_SLOT_1]]\",\n    \"prompt\": \"Professional photorealistic 16:9 hero image...\"\n  }\n],\n\"imagePrompt\": \"Professional photorealistic 16:9 hero image...\"\n\nReturn only valid JSON. No markdown fences. No commentary before or after the JSON.\nJSON ESCAPING RULE\n\nReturn valid JSON only.\n\nInside contentHtml, use single quotes for HTML attributes.\n\nCorrect:\n<a href='https://example.com'>Anchor text</a>\n\nAvoid:\n<a href=\"https://example.com\">Anchor text</a>\n\nDo not include unescaped double quotes inside any JSON string value.\nVERY IMPORTANT RULE\nYOU HAVE TO ADD INTERNAL LINKS IF THEY ARE PROVIDED TO YOU\nIF THE IMAGES ARE 0 THEN DONT ADD IMAGE SLOTS"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        176,
+        -16
+      ],
+      "id": "16c5835e-8148-46cd-bcd9-eedec094ad3c",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-opus-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        96,
+        176
+      ],
+      "id": "ae66a28e-5e05-4639-8ad1-310293edaed9",
+      "name": "OpenRouter Chat Model1"
+    },
+    {
+      "parameters": {
+        "resource": "search",
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', `Use live web research using this tool`, 'string') }}",
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 2,
+      "position": [
+        352,
+        560
+      ],
+      "id": "4b0b09a6-afff-4d0e-b439-dd5501b96440",
+      "name": "Search the web in Perplexity"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_OPENROUTER_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Title",
+              "value": "Article Hub Image Generator"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    model: \"google/gemini-3.1-flash-image-preview\",\n    messages: [\n      {\n        role: \"user\",\n        content:\n          $json.prompt +\n          \"\\n\\nImportant uniqueness rule: This is image \" +\n          $json.imageIndex +\n          \" of \" +\n          $json.totalImages +\n          \" for this article. Make it visually distinct from the other article images. Use a different composition, angle, subject focus, background, and scene setup. Do not repeat the same person, pose, workspace, room, camera angle, or visual layout.\" +\n          \"\\n\\nText-in-image rule: You may include short, clean, readable text inside the image only when it genuinely improves the visual, such as a simple headline, label, dashboard title, chart label, sign, notebook note, or product-style visual. Do not add text to every image. If text is not naturally useful for this specific image, create the image without text. When text is used, keep it minimal, relevant, correctly spelled, and professionally integrated into the scene.\" +\n          \"\\n\\nDo not include random captions, unrelated labels, fake logos, watermarks, messy typography, or excessive text inside the image.\"\n      }\n    ]\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1008,
+        48
+      ],
+      "id": "a66079d7-f7ad-40a9-8e48-5f075a2a2a91",
+      "name": "Generate Image with OpenRouter"
+    },
+    {
+      "parameters": {
+        "jsCode": "const MAX_IMAGES = 10;\n\nfunction stripCodeFences(value) {\n  return String(value ?? '')\n    .trim()\n    .replace(/^```(?:json)?\\s*/i, '')\n    .replace(/\\s*```$/i, '')\n    .trim();\n}\n\nfunction extractJsonObject(value) {\n  const text = stripCodeFences(value);\n  const firstBrace = text.indexOf('{');\n  const lastBrace = text.lastIndexOf('}');\n\n  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {\n    return text;\n  }\n\n  return text.slice(firstBrace, lastBrace + 1);\n}\n\nfunction escapeRegExp(value) {\n  return String(value).replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');\n}\n\nfunction decodeJsonishString(value) {\n  return String(value ?? '')\n    .replace(/\\\\n/g, '\\n')\n    .replace(/\\\\r/g, '\\r')\n    .replace(/\\\\t/g, '\\t')\n    .replace(/\\\\\"/g, '\"')\n    .replace(/\\\\\\//g, '/')\n    .replace(/\\\\\\\\/g, '\\\\')\n    .trim();\n}\n\nfunction extractStringField(text, fieldName, nextFieldNames = []) {\n  const fieldRegex = new RegExp(`\"${escapeRegExp(fieldName)}\"\\\\s*:\\\\s*\"`, 'm');\n  const match = fieldRegex.exec(text);\n\n  if (!match) return '';\n\n  const valueStart = match.index + match[0].length;\n  let valueEnd = -1;\n\n  for (const nextFieldName of nextFieldNames) {\n    const nextRegex = new RegExp(`\",\\\\s*\"${escapeRegExp(nextFieldName)}\"\\\\s*:`, 'm');\n    const searchArea = text.slice(valueStart);\n    const nextMatch = nextRegex.exec(searchArea);\n\n    if (nextMatch) {\n      const possibleEnd = valueStart + nextMatch.index;\n      if (valueEnd === -1 || possibleEnd < valueEnd) {\n        valueEnd = possibleEnd;\n      }\n    }\n  }\n\n  if (valueEnd === -1) {\n    const tail = text.slice(valueStart);\n    const lastQuoteBeforeEnd = tail.lastIndexOf('\"');\n    if (lastQuoteBeforeEnd === -1) return '';\n    valueEnd = valueStart + lastQuoteBeforeEnd;\n  }\n\n  return decodeJsonishString(text.slice(valueStart, valueEnd));\n}\n\nfunction extractNumberField(text, fieldName, fallback = 0) {\n  const regex = new RegExp(`\"${escapeRegExp(fieldName)}\"\\\\s*:\\\\s*([0-9]+(?:\\\\.[0-9]+)?)`, 'm');\n  const match = regex.exec(text);\n\n  if (!match) return fallback;\n\n  const number = Number(match[1]);\n  return Number.isFinite(number) ? number : fallback;\n}\n\nfunction extractArrayText(text, fieldName) {\n  const fieldRegex = new RegExp(`\"${escapeRegExp(fieldName)}\"\\\\s*:`, 'm');\n  const fieldMatch = fieldRegex.exec(text);\n\n  if (!fieldMatch) return '';\n\n  const startSearch = fieldMatch.index + fieldMatch[0].length;\n  const start = text.indexOf('[', startSearch);\n\n  if (start === -1) return '';\n\n  let depth = 0;\n  let inString = false;\n  let escaped = false;\n\n  for (let i = start; i < text.length; i++) {\n    const char = text[i];\n\n    if (inString) {\n      if (escaped) {\n        escaped = false;\n      } else if (char === '\\\\') {\n        escaped = true;\n      } else if (char === '\"') {\n        inString = false;\n      }\n      continue;\n    }\n\n    if (char === '\"') {\n      inString = true;\n      continue;\n    }\n\n    if (char === '[') {\n      depth += 1;\n      continue;\n    }\n\n    if (char === ']') {\n      depth -= 1;\n\n      if (depth === 0) {\n        return text.slice(start, i + 1);\n      }\n    }\n  }\n\n  return '';\n}\n\nfunction parseArrayField(text, fieldName) {\n  const arrayText = extractArrayText(text, fieldName);\n\n  if (!arrayText) return [];\n\n  try {\n    return JSON.parse(arrayText);\n  } catch (error) {\n    return [];\n  }\n}\n\nfunction recoverArticleFromInvalidJson(text) {\n  const jsonText = extractJsonObject(text);\n\n  const article = {\n    title: extractStringField(jsonText, 'title', ['excerpt']) || 'Untitled Article',\n    excerpt: extractStringField(jsonText, 'excerpt', ['contentHtml']) || '',\n    contentHtml: extractStringField(jsonText, 'contentHtml', [\n      'contentMarkdown',\n      'metaTitle',\n      'metaDescription',\n      'slug',\n      'wordCount',\n      'seoScore',\n      'references',\n      'imagePrompts',\n      'imagePrompt'\n    ]),\n    contentMarkdown: extractStringField(jsonText, 'contentMarkdown', [\n      'metaTitle',\n      'metaDescription',\n      'slug',\n      'wordCount',\n      'seoScore',\n      'references',\n      'imagePrompts',\n      'imagePrompt'\n    ]),\n    metaTitle: extractStringField(jsonText, 'metaTitle', ['metaDescription']) || '',\n    metaDescription: extractStringField(jsonText, 'metaDescription', ['slug']) || '',\n    slug: extractStringField(jsonText, 'slug', ['wordCount']) || '',\n    wordCount: extractNumberField(jsonText, 'wordCount', 0),\n    seoScore: extractNumberField(jsonText, 'seoScore', 0),\n    references: parseArrayField(jsonText, 'references'),\n    imagePrompts: parseArrayField(jsonText, 'imagePrompts'),\n    imagePrompt: ''\n  };\n\n  article.imagePrompt =\n    extractStringField(jsonText, 'imagePrompt', []) ||\n    article.imagePrompts?.[0]?.prompt ||\n    '';\n\n  if (!article.contentHtml) {\n    throw new Error('Could not recover contentHtml from invalid AI JSON');\n  }\n\n  return article;\n}\n\nfunction parseArticle(raw) {\n  if (raw && typeof raw === 'object' && raw.output !== undefined) {\n    raw = raw.output;\n  }\n\n  if (typeof raw === 'string') {\n    const cleaned = extractJsonObject(raw);\n\n    try {\n      return JSON.parse(cleaned);\n    } catch (error) {\n      return recoverArticleFromInvalidJson(cleaned);\n    }\n  }\n\n  if (raw && typeof raw === 'object') {\n    return raw;\n  }\n\n  throw new Error('AI article output is empty or unsupported');\n}\n\nfunction getRequestedImageCount() {\n  const body = $('Webhook').first().json.body || {};\n  const visual = body.visualEngine || {};\n  const count = Number(visual.contentImageCount ?? 0);\n\n  const imagesEnabled =\n    visual.generateContentImages === true ||\n    visual.generateCoverImage === true ||\n    count > 0;\n\n  if (!imagesEnabled || !Number.isFinite(count) || count <= 0) return 0;\n\n  return Math.min(Math.floor(count), MAX_IMAGES);\n}\n\nfunction defaultNegativePrompt() {\n  return [\n    'blurry',\n    'low quality',\n    'distorted hands',\n    'distorted faces',\n    'extra fingers',\n    'watermark',\n    'logo',\n    'random text',\n    'text artifacts',\n    'irrelevant objects',\n    'overcrowded composition',\n    'unprofessional stock photo look',\n    'misleading visuals'\n  ].join(', ');\n}\n\nfunction escapeText(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction makeSlot(index) {\n  return `[[IMAGE_SLOT_${index}]]`;\n}\n\nfunction fallbackPrompt(article, index, total) {\n  const body = $('Webhook').first().json.body || {};\n  const visual = body.visualEngine || {};\n  const client = body.clientProfile || {};\n\n  const style = visual.advanced?.style || 'photoreal';\n  const aspectRatio = visual.advanced?.aspectRatio || '16:9';\n  const topic = body.contentBrief?.topic || article.title || 'blog article';\n  const audience =\n    client.targetAudience ||\n    body.configuration?.intendedAudience ||\n    'general readers';\n\n  const brandColors = Array.isArray(client.brandColors)\n    ? client.brandColors.join(', ')\n    : '';\n\n  const imageRole =\n    index === 1 && visual.generateCoverImage\n      ? 'hero featured blog image'\n      : `supporting section image ${index} of ${total}`;\n\n  return [\n    `Create a professional ${style} ${aspectRatio} ${imageRole} for an article about \"${topic}\".`,\n    `Target audience: ${audience}.`,\n    brandColors ? `Subtly fit this brand color palette: ${brandColors}.` : '',\n    'Make the image publication-ready, clean, useful, visually distinct, and relevant to the nearby article section.',\n    'Use strong lighting, clear composition, realistic details, and no readable text inside the image.'\n  ]\n    .filter(Boolean)\n    .join(' ');\n}\n\nfunction convertOldSlotsToNew(html) {\n  return String(html || '').replace(/\\{\\{IMAGE_SLOT_(\\d+)\\}\\}/g, (_, num) => {\n    return makeSlot(Number(num));\n  });\n}\n\nfunction removeDuplicateOrOverflowSlots(contentHtml, requestedCount) {\n  let html = String(contentHtml || '');\n  const seen = new Set();\n\n  html = html.replace(/\\[\\[IMAGE_SLOT_(\\d+)\\]\\]/g, (match, num) => {\n    const n = Number(num);\n\n    if (!Number.isInteger(n) || n < 1 || n > requestedCount) return '';\n    if (seen.has(n)) return '';\n\n    seen.add(n);\n    return makeSlot(n);\n  });\n\n  return html;\n}\n\nfunction insertSlotBeforeHeading(html, slot, headingIndex) {\n  const headingRegex = /<h2\\b[^>]*>/gi;\n  const matches = [...String(html).matchAll(headingRegex)];\n\n  if (matches[headingIndex]) {\n    const position = matches[headingIndex].index;\n    return html.slice(0, position) + slot + html.slice(position);\n  }\n\n  return null;\n}\n\nfunction insertSlotBeforeConclusion(html, slot) {\n  const conclusionRegex =\n    /<h2\\b[^>]*>\\s*(conclusion|final thoughts|final takeaway|wrapping up|summary)\\s*<\\/h2>/i;\n\n  const match = String(html).match(conclusionRegex);\n\n  if (match && match.index !== undefined) {\n    return html.slice(0, match.index) + slot + html.slice(match.index);\n  }\n\n  return null;\n}\n\nfunction insertSlotBeforeArticleEnd(html, slot) {\n  if (String(html).includes('</article>')) {\n    return String(html).replace('</article>', `${slot}</article>`);\n  }\n\n  return String(html) + slot;\n}\n\nfunction normalizeSlotsInHtml(contentHtml, requestedCount) {\n  let html = String(contentHtml || '');\n\n  html = convertOldSlotsToNew(html);\n\n  const emptyImgRegex = /<img\\b[^>]*src=([\"'])\\s*\\1[^>]*\\/?>/gi;\n  let emptyImgIndex = 0;\n\n  html = html.replace(emptyImgRegex, () => {\n    emptyImgIndex += 1;\n    return emptyImgIndex <= requestedCount ? makeSlot(emptyImgIndex) : '';\n  });\n\n  html = removeDuplicateOrOverflowSlots(html, requestedCount);\n\n  for (let i = 1; i <= requestedCount; i++) {\n    const slot = makeSlot(i);\n\n    if (html.includes(slot)) continue;\n\n    let updatedHtml = null;\n\n    if (i === 1) {\n      updatedHtml = insertSlotBeforeHeading(html, slot, 0);\n    } else {\n      updatedHtml = insertSlotBeforeHeading(html, slot, i - 1);\n    }\n\n    if (!updatedHtml) {\n      updatedHtml = insertSlotBeforeConclusion(html, slot);\n    }\n\n    if (!updatedHtml) {\n      updatedHtml = insertSlotBeforeArticleEnd(html, slot);\n    }\n\n    html = updatedHtml;\n  }\n\n  return html;\n}\n\nfunction normalizeImagePromptString(value) {\n  if (!value) return '';\n\n  if (typeof value === 'string') {\n    const cleaned = escapeText(value);\n\n    if (cleaned.startsWith('{') && cleaned.endsWith('}')) {\n      try {\n        const parsed = JSON.parse(cleaned);\n        return escapeText(parsed.prompt);\n      } catch (error) {\n        return cleaned;\n      }\n    }\n\n    return cleaned;\n  }\n\n  if (typeof value === 'object') {\n    return escapeText(value.prompt);\n  }\n\n  return escapeText(value);\n}\n\nconst requestedCount = getRequestedImageCount();\nconst output = [];\n\nfor (const item of $input.all()) {\n  const article = parseArticle(item.json);\n\n  if (!article || typeof article !== 'object') {\n    throw new Error('Parsed article must be an object');\n  }\n\n  if (!article.contentHtml) {\n    throw new Error('Article JSON must include contentHtml');\n  }\n\n  if (requestedCount === 0) {\n    article.imagePrompts = [];\n    article.imagePrompt = '';\n\n    output.push({\n      json: {\n        article,\n        generatedImages: [],\n        shouldGenerateImages: false\n      }\n    });\n\n    continue;\n  }\n\n  article.contentHtml = normalizeSlotsInHtml(article.contentHtml, requestedCount);\n\n  const originalPrompts = Array.isArray(article.imagePrompts)\n    ? article.imagePrompts\n    : [];\n\n  const normalizedPrompts = [];\n\n  for (let i = 1; i <= requestedCount; i++) {\n    const slot = makeSlot(i);\n\n    const promptItem =\n      originalPrompts.find((p) => p?.slot === slot) ||\n      originalPrompts.find((p) =>\n        String(p?.slot || '').includes(`IMAGE_SLOT_${i}`)\n      ) ||\n      originalPrompts[i - 1] ||\n      {};\n\n    const prompt =\n      escapeText(promptItem.prompt) || fallbackPrompt(article, i, requestedCount);\n\n    const alt =\n      escapeText(promptItem.alt) || `${article.title || 'Article'} image ${i}`;\n\n    const title =\n      escapeText(promptItem.title) || `${article.title || 'Article'} image ${i}`;\n\n    const caption = escapeText(promptItem.caption) || '';\n\n    const normalized = {\n      slot,\n      placement: escapeText(promptItem.placement) || '',\n      sectionHeading: escapeText(promptItem.sectionHeading) || '',\n      imageType:\n        escapeText(promptItem.imageType) ||\n        (i === 1 ? 'featured image' : 'section image'),\n      imagePurpose: escapeText(promptItem.imagePurpose) || '',\n      prompt,\n      negativePrompt:\n        escapeText(promptItem.negativePrompt) || defaultNegativePrompt(),\n      alt,\n      title,\n      caption\n    };\n\n    normalizedPrompts.push(normalized);\n\n    output.push({\n      json: {\n        article,\n        shouldGenerateImages: true,\n        imageIndex: i,\n        totalImages: requestedCount,\n        slot,\n        prompt: `${prompt}\\n\\nNegative prompt: ${normalized.negativePrompt}`,\n        alt,\n        title,\n        caption,\n        placement: normalized.placement,\n        sectionHeading: normalized.sectionHeading,\n        imageType: normalized.imageType,\n        imagePurpose: normalized.imagePurpose,\n        model: 'google/gemini-2.5-flash-image'\n      }\n    });\n  }\n\n  article.imagePrompts = normalizedPrompts;\n  article.imagePrompt =\n    normalizedPrompts[0]?.prompt || normalizeImagePromptString(article.imagePrompt);\n}\n\nreturn output.map((item) => {\n  if (!item || typeof item !== 'object') {\n    return { json: { value: item } };\n  }\n\n  if (!item.json) {\n    return { json: item };\n  }\n\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        160
+      ],
+      "id": "6c9edcec-b4d6-46c4-b688-e5e3a6005118",
+      "name": "Prepare Image Jobs"
+    },
+    {
+      "parameters": {
+        "jsCode": "function escapeHtml(value) {\n  return String(value ?? '')\n    .replaceAll('&', '&amp;')\n    .replaceAll('\"', '&quot;')\n    .replaceAll('<', '&lt;')\n    .replaceAll('>', '&gt;');\n}\n\nfunction extractImageUrl(response) {\n  const message = response.choices?.[0]?.message;\n\n  const direct =\n    message?.images?.[0]?.image_url?.url ||\n    message?.content?.[0]?.image_url?.url ||\n    response.data?.[0]?.url ||\n    response.data?.[0]?.b64_json ||\n    response.imageUrl ||\n    response.image_url ||\n    response.url ||\n    '';\n\n  if (direct) return String(direct);\n\n  if (typeof message?.content === 'string') {\n    const dataUrlMatch = message.content.match(/data:image\\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+/);\n    if (dataUrlMatch) return dataUrlMatch[0];\n\n    const httpUrlMatch = message.content.match(/https?:\\/\\/[^\\s\"'<>]+/);\n    if (httpUrlMatch) return httpUrlMatch[0];\n  }\n\n  return '';\n}\n\nconst sourceItems = $items('Prepare Image Jobs');\nconst generatedImages = [];\n\nfor (let i = 0; i < $input.all().length; i++) {\n  const response = $input.all()[i].json;\n  const original = sourceItems[i]?.json;\n\n  if (!original) {\n    throw new Error(`Missing original image job for generated image index ${i}`);\n  }\n\n  let imageUrl = extractImageUrl(response);\n\n  if (\n    imageUrl &&\n    !imageUrl.startsWith('data:image') &&\n    !imageUrl.startsWith('http')\n  ) {\n    imageUrl = `data:image/png;base64,${imageUrl}`;\n  }\n\n  if (!imageUrl) {\n    throw new Error(`No generated image URL/base64 returned for ${original.slot}`);\n  }\n\n  generatedImages.push({\n    imageIndex: original.imageIndex,\n    slot: original.slot,\n    imageUrl,\n    alt: original.alt ?? '',\n    title: original.title ?? '',\n    caption: '',\n    imageHtml: `\n<figure class=\"article-image\" data-image-slot=\"${escapeHtml(original.slot)}\">\n  <img src=\"${imageUrl}\" alt=\"${escapeHtml(original.alt ?? '')}\" title=\"${escapeHtml(original.title ?? '')}\" loading=\"lazy\" />\n</figure>`.trim(),\n    article: original.article,\n  });\n}\n\ngeneratedImages.sort((a, b) => Number(a.imageIndex) - Number(b.imageIndex));\n\nreturn [\n  {\n    json: {\n      article: generatedImages[0]?.article,\n      generatedImages,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        48
+      ],
+      "id": "9dc07ae8-ab00-49f0-aae7-2ce792cd82f2",
+      "name": "Collect Generated Images"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst article = item.article;\n\nif (!article || typeof article !== 'object') {\n  throw new Error('Missing article object before image insertion');\n}\n\nconst generatedImages = Array.isArray(item.generatedImages)\n  ? item.generatedImages\n  : [];\n\nlet contentHtml = String(article.contentHtml || '');\n\nfor (const image of generatedImages) {\n  if (!image.slot || !image.imageHtml) continue;\n\n  if (contentHtml.includes(image.slot)) {\n    contentHtml = contentHtml.split(image.slot).join(image.imageHtml);\n  } else if (contentHtml.includes('</article>')) {\n    // Fallback: if the model forgot the slot, still place the image safely before the article closes.\n    contentHtml = contentHtml.replace('</article>', `${image.imageHtml}</article>`);\n  } else {\n    contentHtml += image.imageHtml;\n  }\n}\n\n// Remove any leftover placeholders so the final article renders cleanly.\ncontentHtml = contentHtml.replace(/\\{\\{IMAGE_SLOT_\\d+\\}\\}/g, '');\n\narticle.contentHtml = contentHtml;\n\narticle.generatedImages = generatedImages.map(img => ({\n  slot: img.slot,\n  imageUrl: img.imageUrl,\n  alt: img.alt,\n  title: img.title,\n  caption: img.caption,\n}));\n\nreturn [\n  {\n    json: article,\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        48
+      ],
+      "id": "b0717e79-8b68-4a20-8c5d-ff693577fcab",
+      "name": "Insert Images Into Article"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "38d58496-4e35-4d36-9cf9-40cf2eb84bcb",
+              "leftValue": "={{ $json.shouldGenerateImages }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        752,
+        160
+      ],
+      "id": "e09daa29-6a1e-4d11-98ec-1aa912bfd881",
+      "name": "If Images Requested"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nreturn [\n  {\n    json: item.article || item,\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        352
+      ],
+      "id": "624fc119-257d-4565-96cc-cda8e5d54e3b",
+      "name": "Return Article Without Images"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-opus-4.6",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        144,
+        576
+      ],
+      "id": "53b11866-a067-470e-95b9-b5a0ea5ea8a9",
+      "name": "OpenRouter Chat Model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f38bab8b-3a77-4a49-a7b6-a5d03c31ac7d",
+              "name": "prompt",
+              "value": "={{ $json.body.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "d8e318c1-127a-4299-96f4-84f810c13108",
+              "name": "Style",
+              "value": "={{ $json.body.style }}",
+              "type": "string"
+            },
+            {
+              "id": "9478a082-ae37-4a75-9b75-9589137c019d",
+              "name": "body.aspectRatio",
+              "value": "={{ $json.body.aspectRatio }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -672,
+        2368
+      ],
+      "id": "cd7b022b-78cc-47c8-a961-59b7daa4f81b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "article-image",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1296,
+        2352
+      ],
+      "id": "2de5acf1-f529-4aee-b2fb-719d48f006dc",
+      "name": "Webhook2"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        176,
+        2352
+      ],
+      "id": "d24a501b-80b1-47d2-8dcc-d0d16b9a641d",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "content": "                                                                                                                                                                                                                                                                                               ARTICLE GENERATION\n",
+        "height": 912,
+        "width": 2800,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -704,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "79ce33b4-02a8-46f0-a880-355834ba3f46",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## iMAGE GENERATION\n",
+        "height": 560,
+        "width": 2208,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1584,
+        2208
+      ],
+      "typeVersion": 1,
+      "id": "0b9dca63-2a98-4d14-961d-2cb35b0ed70e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_OPENROUTER_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Title",
+              "value": "Article Hub Image Generator"
+            },
+            {}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    model: \"google/gemini-3.1-flash-image-preview\",\n    messages: [\n      {\n        role: \"user\",\n        content:\n          $json.prompt +\n          \"\\n\\nImportant uniqueness rule: This is image \" +\n          $json.imageIndex +\n          \" of \" +\n          $json.totalImages +\n          \" for this article. Make it visually distinct from the other article images. Use a different composition, angle, subject focus, background, and scene setup. Do not repeat the same person, pose, workspace, room, camera angle, or visual layout.\" +\n          \"\\n\\nText-in-image rule: You may include short, clean, readable text inside the image only when it genuinely improves the visual, such as a simple headline, label, dashboard title, chart label, sign, notebook note, or product-style visual. Do not add text to every image. If text is not naturally useful for this specific image, create the image without text. When text is used, keep it minimal, relevant, correctly spelled, and professionally integrated into the scene.\" +\n          \"\\n\\nDo not include random captions, unrelated labels, fake logos, watermarks, messy typography, or excessive text inside the image.\"\n      }\n    ]\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -304,
+        2368
+      ],
+      "id": "f8500d1b-59ff-46cb-af5e-c77815a7fd3f",
+      "name": "Generate Image with OpenRouter1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-N8N-HOST/webhook/article-generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 2,
+              "batchInterval": 5000
+            }
+          },
+          "timeout": 600000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        1472
+      ],
+      "id": "e26ce4f7-7880-4e02-a5b0-bae17f765775",
+      "name": "Call Article Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "article-bulk",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        1280
+      ],
+      "id": "9b4af5c5-da54-4999-938d-05e9498b5fd6",
+      "name": "Webhook3"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { accepted: true, runId: $json.body?.meta?.batchId || $json.body?.batchId || null, message: 'Bulk generation accepted by n8n.' } }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -32,
+        1072
+      ],
+      "id": "fd0b7007-394b-40c4-a052-c1fea038582f",
+      "name": "Respond Immediately1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Explode Topics & Build Full Article Request Body ──\n// Constructs the EXACT same request shape the Article Generation\n// webhook expects, so the bulk flow produces identical output.\n\nconst incoming = $json.body ?? $json;\nconst globalSettings = incoming.globalSettings ?? {};\nconst topics = Array.isArray(incoming.topics) ? incoming.topics : [];\nconst batchId = incoming.meta?.batchId ?? incoming.batchId ?? null;\nconst clientProfile = incoming.clientProfile ?? {};\nconst internalLinks = incoming.internal_links ?? [];\n\nif (!topics.length) {\n  throw new Error('No topics provided in bulk payload');\n}\n\nreturn topics.map((topic, index) => {\n  const s = { ...globalSettings, ...(topic.customSettings ?? {}) };\n\n  return {\n    json: {\n      // ── Meta (kept for callback) ──\n      userId: incoming.userId,\n      batchId: topic.batchId ?? batchId,\n      batchName: incoming.batchName,\n      articleId: topic.articleId,\n      articleIndex: topic.articleIndex ?? index + 1,\n      topicId: topic.id,\n      topic: topic.topic,\n      targetKeyword: s.targetKeyword ?? '',\n\n      // ── Full request body identical to Article webhook ──\n      requestBody: {\n        contentBrief: {\n          topic: topic.topic || '',\n          targetKeyword: s.targetKeyword || '',\n          customOutline: s.customOutline || '',\n          liveWebResearch: s.liveWebResearch === true || s.liveWebResearch === 'true'\n        },\n        clientProfile: topic.clientProfile ?? clientProfile,\n        structuralElements: {\n          geoOptimization: s.geoOptimization === true || s.geoOptimization === 'true',\n          hook: s.hook === true,\n          faqs: s.faqs === true,\n          tables: s.tables === true,\n          aiSearchOptimization: s.aiSearchOptimization === true,\n          expertInsights: s.expertInsights === true,\n          recommendations: s.recommendations === true\n        },\n        configuration: {\n          articleType: s.articleType || 'informational',\n          tone: s.tone || 'professional',\n          language: s.language || 'english',\n          wordCount: Number(s.wordCount) || 1500,\n          intendedAudience: s.intendedAudience || '',\n          additionalContext: s.additionalContext || '',\n          internalLinks: s.internalLinks === true,\n          references: s.references === true,\n          readabilityLevel: s.readabilityLevel || 'default-7th',\n          firstPerson: s.firstPerson === true,\n          brandVoiceKnowledge: s.brandVoiceKnowledge === true,\n          competitorAnalysis: s.competitorAnalysis === true,\n          geoOptimization: s.geoOptimization === true || s.geoOptimization === 'true'\n        },\n        visualEngine: {\n          generateCoverImage: s.generateCoverImage === true,\n          generateContentImages: s.generateContentImages === true,\n          contentImageCount: Number(s.contentImageCount) || 0,\n          advanced: {\n            style: s.imageStyle || 'photoreal',\n            aspectRatio: s.imageAspectRatio || '16:9'\n          }\n        },\n        internal_links: topic.internal_links ?? internalLinks\n      }\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        1472
+      ],
+      "id": "93924dd6-7297-4869-933d-f26987e59f33",
+      "name": "Explode Topics1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Build Callback Payload from Article Webhook Response ──\n// The article webhook returns the full article JSON (same as single-article flow).\n// Extract what the save endpoint needs.\n\nconst meta = $('Explode Topics1').first().json;\nconst response = $input.first().json;\n\n// The response could be the article object directly,\n// or wrapped in an array (respondWith: allIncomingItems)\nconst article = Array.isArray(response) ? response[0] : response;\n\nif (!article || !article.contentHtml) {\n  return [{\n    json: {\n      articleId: meta.articleId,\n      batchId: meta.batchId,\n      batchName: meta.batchName,\n      articleIndex: meta.articleIndex,\n      userId: meta.userId,\n      topic: meta.topic,\n      targetKeyword: meta.targetKeyword,\n      status: 'failed',\n      error: 'Article webhook returned no contentHtml'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    articleId: meta.articleId,\n    batchId: meta.batchId,\n    batchName: meta.batchName,\n    articleIndex: meta.articleIndex,\n    userId: meta.userId,\n    topic: meta.topic,\n    targetKeyword: meta.targetKeyword,\n    title: article.title || '',\n    excerpt: article.excerpt || '',\n    contentHtml: article.contentHtml || '',\n    contentMarkdown: article.contentMarkdown || '',\n    metaTitle: article.metaTitle || '',\n    metaDescription: article.metaDescription || '',\n    slug: article.slug || '',\n    wordCount: article.wordCount || 0,\n    seoScore: article.seoScore || 0,\n    references: article.references || [],\n    imagePrompts: article.imagePrompts || [],\n    imagePrompt: article.imagePrompt || '',\n    generatedImages: article.generatedImages || [],\n    model: 'anthropic/claude-opus-4.6',\n    status: 'completed'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        1472
+      ],
+      "id": "ba65f99a-20a1-4453-a11c-932a3a9df413",
+      "name": "Build Callback Payload1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-API-HOST/articles/save-generated",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-webhook-secret",
+              "value": "YOUR_WEBHOOK_SECRET"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        864,
+        1472
+      ],
+      "id": "31a48102-a376-4842-91a6-bdd6426d385d",
+      "name": "Save Article Callback1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3fad15be-f4ef-4e88-a893-5af2d1e22b12",
+              "name": "body.prompt",
+              "value": "={{ $('Webhook2').item.json.body.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "837754d8-2674-4582-ba59-85cdd9f6fe96",
+              "name": "choices[0].message.images",
+              "value": "={{ $json.choices[0].message.images }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        2352
+      ],
+      "id": "190c44a1-ec20-4836-b0f9-9a8597a778f8",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search the web in Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Prepare Image Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Image Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Image Jobs": {
+      "main": [
+        [
+          {
+            "node": "If Images Requested",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Images Requested": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Return Article Without Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image with OpenRouter": {
+      "main": [
+        [
+          {
+            "node": "Collect Generated Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Generated Images": {
+      "main": [
+        [
+          {
+            "node": "Insert Images Into Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Images Into Article": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Article Without Images": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Generate Image with OpenRouter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image with OpenRouter1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Article Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Callback Payload1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook3": {
+      "main": [
+        [
+          {
+            "node": "Respond Immediately1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Explode Topics1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Explode Topics1": {
+      "main": [
+        [
+          {
+            "node": "Call Article Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Callback Payload1": {
+      "main": [
+        [
+          {
+            "node": "Save Article Callback1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "nodeGroups": [],
+  "tags": []
+}
